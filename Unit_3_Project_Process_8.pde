@@ -26,6 +26,10 @@ color selectedColor;
 PImage pikachu;
 boolean pikachuOn; //true or false
 
+//stampTool Size
+float stampSize = 100;
+boolean shouldDraw = true;
+
 void setup() {
   //paper size
   size(1400, 800);
@@ -73,7 +77,7 @@ void draw() {
   fill(lerpColor(darkblue, color(0, 0, 0, 0), 0.9));
   stroke(255, 100);
   rect(430, 680, 140, 110);
-  
+
   fill(lerpColor(darkblue, color(0, 0, 0, 0), 0.9));
   stroke(255, 100);
   rect(580, 675, 330, 100);
@@ -203,6 +207,7 @@ void mouseReleased() {
 
   //"LOAD BUTTON"
   if (mouseX > 1150 && mouseX < 1250 && mouseY > 750 && mouseY < 780) {
+    shouldDraw = false;
     selectInput("Pick an image to load", "openImage");
   }
 
@@ -243,6 +248,7 @@ void mouseReleased() {
   }
 } //End of mouseRelease here: ===================================================================================================
 
+
 void saveImage(File f) {
   if (f != null) {
     PImage canvas = get(1, 1, width, 648);
@@ -250,8 +256,10 @@ void saveImage(File f) {
   }
 }
 
+
 void openImage(File f) {
   if (f != null) {
+    shouldDraw = false;
     int n = 0;
     while (n < 20) {
       PImage pic = loadImage(f.getPath());
@@ -259,7 +267,9 @@ void openImage(File f) {
       n = n + 1;
     }
   }
+  shouldDraw = true;
 }
+
 
 void tactile (int x, int y, int r) {
   if (dist(x, y, mouseX, mouseY) < r) {
@@ -281,18 +291,19 @@ void tactile (int x, int y, int w, int h) {
 
 
 void mouseDragged() {
-  if (mouseY < 650 && mouseY > 0) {
-    if (pikachuOn == false) {
-      stroke(selectedColor);
-      strokeWeight(selectedWeight);
-      line(pmouseX, pmouseY, mouseX, mouseY);
-    } else {
-      image(pikachu, mouseX - 50, mouseY - 50, 100, 100);
+  if (shouldDraw) {
+    if (mouseY < 650 && mouseY > 0) {
+      if (pikachuOn == false) {
+        stroke(selectedColor);
+        strokeWeight(selectedWeight);
+        line(pmouseX, pmouseY, mouseX, mouseY);
+      } else {
+        image(pikachu, mouseX - stampSize/2, mouseY - stampSize/2, stampSize, stampSize);
+      }
     }
   }
   // Slider
   controlSlider();
-  
 } //End of mouseDragged here: =======================================================================================================
 
 void pikachuOnOff() {
@@ -312,4 +323,5 @@ void controlSlider() {
     sliderX = mouseX;
   }
   selectedWeight = map(sliderX, 590, 900, 1, 7);
+  stampSize = map(sliderX, 590, 900, 50, 200);
 } //End of controlSlider: =============================================================================================================
